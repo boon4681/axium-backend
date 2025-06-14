@@ -1,4 +1,6 @@
+import sys_setup
 import axium
 
-some_func = axium.executor["sum_test"]
-print(some_func(1, 2))
+axium.register.load_nodes()
+func = getattr(axium.register.NODE_CLASS_MAPPINGS['sum'], 'sum')
+print(func([0, 1]))
