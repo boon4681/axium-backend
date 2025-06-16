@@ -5,8 +5,11 @@ import importlib.util
 import os
 import sys
 import logging
+import inspect
+import typing
 
 from . import folder
+from . import typing as node_typing
 logging.basicConfig(level=logging.INFO)
 
 LOADED_MODULE_DIRS = {}
@@ -90,8 +93,62 @@ def load_nodes():
             )
 
 
+def validate_interface(cls, base):
+    errors = []
+
+    hints = typing.get_type_hints(base)
+    hints_extra = typing.get_type_hints(base, include_extras=True)
+    for attr in getattr(base, '__annotations__', {}):
+        t = hints_extra[attr]
+        optional = (isinstance(None, hints[attr]))\
+            or (hasattr(t, "__origin__") and t.__origin__ is typing.NotRequired)
+        dict_optional = False
+        if not optional and isinstance(cls, typing.Dict):
+            if cls.get(attr) != getattr(base, attr):
+                errors.append(
+                    f"Method {name} signature mismatch. Expected: {base_params}, Got: {cls_params}")
+            else:
+                dict_optional = True
+        if not hasattr(cls, attr) and not optional and not dict_optional:
+            errors.append(f"Missing: {attr}")
+
+    for name, method in inspect.getmembers(base, inspect.ismethod):
+        if getattr(method, '__isabstractmethod__', False):
+            if not hasattr(cls, name) or not callable(getattr(cls, name)):
+                errors.append(f"Missing method: {name}")
+            else:
+                cls_method = getattr(cls, name)
+                base_attr = getattr(base, name)
+                try:
+                    base_sig = inspect.signature(base_attr)
+                    cls_sig = inspect.signature(cls_method)
+
+                    base_params = list(base_sig.parameters.keys())
+                    cls_params = list(cls_sig.parameters.keys())
+
+                    if base_params != cls_params:
+                        errors.append(
+                            f"Method {name} signature mismatch. Expected: {base_params}, Got: {cls_params}")
+
+                except (ValueError, TypeError) as e:
+                    errors.append(
+                        f"Could not compare signatures for {name}: {e}")
+    return len(errors) == 0, errors
+
+
 def get_node(id: str):
-    pass
+    node = NODE_CLASS_MAPPINGS[id]
+    valid, errors = validate_interface(node, node_typing.AxiumNode)
+    if valid:
+        node = typing.cast(node_typing.AxiumNode, node)
+        for name, type, meta in node.INPUT_TYPES():
+            meta["type"] = type
+            print(name, type, validate_interface(
+                meta, node_typing.InputTypeFloat))
+        pass
+    else:
+        for err in errors:
+            logging.error(err)
 
 
 __all__ = [

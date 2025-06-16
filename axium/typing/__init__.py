@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import Literal, TypedDict, Optional
+from typing_extensions import NotRequired
+from typing import Literal, TypedDict, Optional, Union
 from abc import ABC, abstractmethod
 from enum import Enum
 
@@ -12,7 +13,9 @@ class StrEnum(str, Enum):
 
 
 class TYPE(StrEnum):
-    STRING = ""
+    STRING = "AXIUM.STRING"
+    INT = "AXIUM.INT"
+    FLOAT = "AXIUM.FLOAT"
 
 
 class InputType(TypedDict):
@@ -22,7 +25,7 @@ class InputType(TypedDict):
 class AxiumNode(ABC):
     __CATEGORY__: str
     __FUNCTION__: str
-    __DESCRIPTION__: str
+    __DESCRIPTION__: Union[str, None]
 
     @classmethod
     @abstractmethod
@@ -33,3 +36,21 @@ class AxiumNode(ABC):
     @abstractmethod
     def OUTPUT_TYPES(s) -> list[tuple[str, TYPE]]:
         return []
+
+
+class InputTypeString(InputType):
+    type = TYPE.STRING
+    default: NotRequired[str]
+
+
+class InputTypeInt(InputType):
+    type = TYPE.INT
+    default: NotRequired[int]
+    min: NotRequired[int]
+    max: NotRequired[int]
+
+class InputTypeFloat(InputType):
+    type = TYPE.FLOAT
+    default: NotRequired[float]
+    min: NotRequired[float]
+    max: NotRequired[float]

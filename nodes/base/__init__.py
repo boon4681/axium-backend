@@ -8,8 +8,8 @@ class Sum:
     @classmethod
     def INPUT_TYPES(s):
         return [
-            ("a", "FLOAT", {"default": 0, "required": True}),
-            ("b", "FLOAT", {"default": 0, "required": True})
+            ("a", "AXIUM.FLOAT", {"default": 0, "required": True}),
+            ("b", "AXIUM.FLOAT", {"default": 0, "required": True})
         ]
 
     @classmethod
