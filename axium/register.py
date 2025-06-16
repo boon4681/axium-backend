@@ -145,10 +145,11 @@ def get_node(id: str):
             meta["type"] = type
             print(name, type, validate_interface(
                 meta, node_typing.InputTypeFloat))
-        pass
+        return node
     else:
         for err in errors:
             logging.error(err)
+    return None
 
 
 __all__ = [

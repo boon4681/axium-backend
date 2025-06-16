@@ -1,4 +1,4 @@
-import sys_setup
+import sys_setup # setup things
 import axium
 
 axium.register.load_nodes()
