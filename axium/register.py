@@ -9,7 +9,7 @@ import inspect
 import typing
 
 from . import folder
-from . import typing as node_typing
+from . import node_typing as node_typing
 logging.basicConfig(level=logging.INFO)
 
 LOADED_MODULE_DIRS = {}

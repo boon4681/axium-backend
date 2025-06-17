@@ -15,7 +15,7 @@ class Sum:
     @classmethod
     def OUTPUT_TYPES(s):
         return [
-            ("result", "FLOAT")
+            ("result", "AXIUM.FLOAT")
         ]
 
     def sum(inputs):
@@ -24,6 +24,27 @@ class Sum:
         return [a+b]
 
 
+class Abs:
+    __FUNCTION__ = "abs"
+    __CATEGORY__ = "math"
+
+    @classmethod
+    def INPUT_TYPES(s):
+        return [
+            ("a", "AXIUM.FLOAT", {"default": 0, "required": True})
+        ]
+
+    @classmethod
+    def OUTPUT_TYPES(s):
+        return [
+            ("result", "AXIUM.FLOAT")
+        ]
+
+    def abs(inputs):
+        return abs(inputs[0])
+
+
 EXPORT_NODES = {
-    "sum": Sum
+    "sum": Sum,
+    "abs": Abs
 }

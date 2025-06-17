@@ -1,9 +1,14 @@
-import sys_setup # setup things
+import sys_setup  # setup things
 import axium
 
 axium.register.load_nodes()
 
 axium.register
-func = getattr(axium.register.NODE_CLASS_MAPPINGS['sum'], 'sum')
-print(func([0, 1]))
-axium.register.get_node('sum')
+node_cls = axium.register.get_node('sum')
+func = getattr(node_cls, node_cls.__FUNCTION__)
+print(func([5, 1]))
+
+
+node_cls = axium.register.get_node("abs")
+func = getattr(node_cls, node_cls.__FUNCTION__)
+print(func([-5]))
