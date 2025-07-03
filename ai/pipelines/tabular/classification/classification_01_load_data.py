@@ -102,9 +102,9 @@ class ClassificationDataLoader:
 
 
 def main():
-    """Example usage of DataLoader"""
+    """Example usage of ClassificationDataLoader"""
     # Example 1: Load sample dataset
-    loader = DataLoader()
+    loader = ClassificationDataLoader()
     X, y = loader.load_sample_dataset("iris")
 
     print("\nData Info:")
