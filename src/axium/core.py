@@ -4,27 +4,24 @@ from pathlib import Path
 
 from axium.utils import split_camel_case
 
+logger = logging.getLogger("Axium's Backend")
+logger.setLevel(logging.INFO)
+
 class Axium:
-    registry = []
-    registry_id: int = 0
+    registry = {}
 
     @classmethod
     def register(cls, template_cls):
-
-        name = " ".join(split_camel_case(template_cls.__name__))
-
-        template_cls.name = name
-        template_cls.id = cls.registry_id
+        if template_cls.id is None:
+            raise ImportError
 
         template_cls.gen_object()
-
-        cls.registry.append(template_cls)
-        cls.registry_id += 1
+        cls.registry[template_cls.id] = template_cls
 
     @classmethod    
     def setup(cls):
         """
-        Load the template node, called on start
+            Load the template node, called on start
         """
 
         nodes_dir = "src/templates"
@@ -41,18 +38,18 @@ class Axium:
 
             try:
                 importlib.import_module(full_module_name)
-                print(f"{full_module_name} imported")
+                logger.info(f"{full_module_name} imported")
             except Exception as e:
-                print(f"Failed to import {full_module_name}\n Cause: {e}")
+                logger.info(f"Failed to import {full_module_name}\n Cause: {e}")
     
     @classmethod
-    def get_node(cls, id: int):
-        if id < 0 or id >= len(cls.registry):
+    def get_node(cls, id: str):
+        if id not in cls.registry:
             return None
         
         return cls.registry[id]
 
     @classmethod
     def get_all_node(cls):
-        return [template.object for template in cls.registry]
+        return [template.object for template in cls.registry.values()]
     

@@ -9,7 +9,7 @@ def get_all_nodes():
     return Axium.get_all_node()
 
 @router.get("/{id}")  
-def get_node(id: int):
+def get_node(id: str):
     node = Axium.get_node(id)
 
     if not node:

@@ -6,13 +6,12 @@ class AxiumTemplateRegisterMeta(type):
     def __init__(cls, name, bases, attrs):
         if name != 'AxiumTemplate':
             Axium.register(cls)
-            print("Registered Module", cls)
         
         super().__init__(name, bases, attrs)
 
 class AxiumTemplate(metaclass=AxiumTemplateRegisterMeta):
 
-    id: int = -1
+    id: str = None
     name: str = None
     category: str = None
 
@@ -43,9 +42,10 @@ class AxiumTemplate(metaclass=AxiumTemplateRegisterMeta):
     
     @classmethod
     def gen_object(cls):
+        class_name = " ".join(split_camel_case(cls.__name__))
         
         if cls.name is None:
-            cls.name = split_camel_case(cls.__name__)
+            cls.name = class_name
 
         cls.object = {
             "id": cls.id,
