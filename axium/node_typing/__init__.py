@@ -3,6 +3,7 @@ from typing_extensions import NotRequired
 from typing import Literal, TypedDict, Optional, Union
 from abc import ABC, abstractmethod
 from enum import Enum
+from pydantic import BaseModel
 
 
 class StrEnum(str, Enum):
@@ -18,8 +19,13 @@ class TYPE(StrEnum):
     FLOAT = "AXIUM.FLOAT"
 
 
-class InputType(TypedDict):
-    type: str
+class InputOptions(TypedDict):
+    required: NotRequired[bool]
+
+
+class AxiumNodeINPUT_TYPES(BaseModel):
+    ports: list[tuple[str, TYPE, InputOptions]]
+    parameters: Optional[list[tuple[str, TYPE, InputOptions]]]
 
 
 class AxiumNode(ABC):
@@ -29,28 +35,12 @@ class AxiumNode(ABC):
 
     @classmethod
     @abstractmethod
-    def INPUT_TYPES(s) -> list[tuple[str, TYPE, InputType]]:
-        return []
+    def INPUT_TYPES(s) -> AxiumNodeINPUT_TYPES:
+        return {
+            "ports": []
+        }
 
     @classmethod
     @abstractmethod
     def OUTPUT_TYPES(s) -> list[tuple[str, TYPE]]:
         return []
-
-
-class InputTypeString(InputType):
-    type = TYPE.STRING
-    default: NotRequired[str]
-
-
-class InputTypeInt(InputType):
-    type = TYPE.INT
-    default: NotRequired[int]
-    min: NotRequired[int]
-    max: NotRequired[int]
-
-class InputTypeFloat(InputType):
-    type = TYPE.FLOAT
-    default: NotRequired[float]
-    min: NotRequired[float]
-    max: NotRequired[float]

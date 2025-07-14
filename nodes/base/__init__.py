@@ -7,10 +7,23 @@ class Sum:
 
     @classmethod
     def INPUT_TYPES(s):
-        return [
-            ("a", "AXIUM.FLOAT", {"default": 0, "required": True}),
-            ("b", "AXIUM.FLOAT", {"default": 0, "required": True})
-        ]
+        return {
+            "ports": [
+                ("a", "AXIUM.FLOAT", {"default": 0}),
+                ("b", "AXIUM.FLOAT", {"default": 0})
+            ],
+            "parameters": [
+                ("b", "AXIUM.SELECTION", {
+                    "default": "",
+                    "options": [
+                        "a",
+                        "b",
+                        "c",
+                        "d"
+                    ]
+                })
+            ]
+        }
 
     @classmethod
     def OUTPUT_TYPES(s):
@@ -30,9 +43,12 @@ class Abs:
 
     @classmethod
     def INPUT_TYPES(s):
-        return [
-            ("a", "AXIUM.FLOAT", {"default": 0, "required": True})
-        ]
+        return {
+            "ports": [
+                ("a", "AXIUM.FLOAT", {"default": 0, "required": True})
+            ],
+            "parameters": []
+        }
 
     @classmethod
     def OUTPUT_TYPES(s):
@@ -40,11 +56,22 @@ class Abs:
             ("result", "AXIUM.FLOAT")
         ]
 
+    @classmethod
+    def VALIDATION(s):
+        return [
+
+        ]
+
     def abs(inputs):
         return abs(inputs[0])
 
 
+class N:
+    pass
+
+
 EXPORT_NODES = {
     "sum": Sum,
-    "abs": Abs
+    "abs": Abs,
+    "n": N
 }

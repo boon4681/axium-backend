@@ -12,3 +12,6 @@ print(func([5, 1]))
 node_cls = axium.register.get_node("abs")
 func = getattr(node_cls, node_cls.__FUNCTION__)
 print(func([-5]))
+
+node_cls = axium.register.get_node("n")
+print(node_cls)

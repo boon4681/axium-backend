@@ -7,7 +7,7 @@ import sys
 import logging
 import inspect
 import typing
-
+from pydantic import TypeAdapter
 from . import folder
 from . import node_typing as node_typing
 logging.basicConfig(level=logging.INFO)
@@ -136,17 +136,35 @@ def validate_interface(cls, base):
     return len(errors) == 0, errors
 
 
+def safe_input_types_validator(obj):
+    try:
+        ta = TypeAdapter(node_typing.AxiumNodeINPUT_TYPES)
+        ta.validate_python(obj)
+        return True
+    except ValueError as e:
+        print(e)
+        return False
+
+
 def get_node(id: str):
+    if id not in NODE_CLASS_MAPPINGS:
+        logging.error(f"Node \"{id}\" not found.")
+        return None
     node = NODE_CLASS_MAPPINGS[id]
     valid, errors = validate_interface(node, node_typing.AxiumNode)
     if valid:
         node = typing.cast(node_typing.AxiumNode, node)
-        for name, type, meta in node.INPUT_TYPES():
-            meta["type"] = type
-            print(name, type, validate_interface(
-                meta, node_typing.InputTypeFloat))
-        return node
+        inputs = node.INPUT_TYPES()
+        valid = safe_input_types_validator(inputs)
+        if valid:
+            for name, type, meta in inputs["ports"]:
+                meta["type"] = type
+                print(name, type)
+            return node
+        else:
+            logging.error(f"Invalid Node \"{id}\"")
     else:
+        logging.error(f"Invalid Node \"{id}\"")
         for err in errors:
             logging.error(err)
     return None
