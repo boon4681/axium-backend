@@ -1,29 +1,64 @@
 import os
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
+from axium.project import AxiumProjectManager, AxiumProjectFile, AxiumProjectStateSave
+from typing import List, Optional
 
 router = APIRouter(prefix="/project", tags=["Project"])
 
-@router.get("/")
-def get_last_opened_project():
-    return {}
-
-class AxiumFileBody(BaseModel):
+class ProjectCreateBody(BaseModel):
     name: str
-    path: str
+    path: str  # base directory
+
+class ProjectOpenBody(BaseModel):
+    path: str  # project folder path
+
+class ProjectSaveBody(BaseModel):
+    path: str  # project folder path
+    name: str
+    created_date: Optional[str] = None
+    last_modified: Optional[str] = None
+    state: Optional[dict] = None
 
 @router.post("/")
-def init_project(body: AxiumFileBody):
+def create_project(body: ProjectCreateBody):
+    try:
+        project_dir = AxiumProjectManager.create_project(body.path, body.name)
+        return {"project_dir": project_dir}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-    with open(f"{body.path}/practice.cpp", "r") as file:
-        print(file.read())
+@router.post("/open")
+def open_project(body: ProjectOpenBody):
+    try:
+        project = AxiumProjectManager.open_project(body.path)
+        return { "project": project.to_dict()}
 
-    return { "file_name": os.listdir(body.path) }
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
-@router.get("/{id}")
-def get_project_from_id(id: str):
-    return {}
+@router.patch("/")
+def save_project(body: ProjectSaveBody):
+    try:
+        project_file = AxiumProjectFile(
+            name=body.name,
+            created_date=body.created_date,
+            last_modified=body.last_modified,
+            state=AxiumProjectStateSave.from_dict(body.state or {})
+        )
+        AxiumProjectManager.save_project(body.path, project_file)
+        
+        return {"status": "success"}
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-@router.patch("/{id}")
-def save_project_from_id(id: str):
-    return {}
+@router.get("/recent")
+def get_recent_projects():
+    try:
+        recent = AxiumProjectManager.get_recent_projects()
+        return {"recent_projects": recent}
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

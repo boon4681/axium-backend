@@ -1,7 +1,6 @@
 from axium.template import AxiumTemplate
 
 class PositivePlusNegative(AxiumTemplate):
-
     id = "PosNeg"
 
     input = {

@@ -1,5 +1,8 @@
 import re
 
+class JSONObject:
+    def __init__(self):
+        pass
 
 def split_camel_case(text: str):
     """

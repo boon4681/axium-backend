@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-class AxiumGraph:
+class AxiumGraphExucutor:
     graph = defaultdict(list)
     node = set()
 
@@ -20,6 +20,12 @@ class AxiumGraph:
 
     @classmethod
     def run(cls):
+        sorted_node = cls.get_topological_sorted_node()
+        for node in sorted_node:
+            print(node)
+
+    @classmethod
+    def get_topological_sorted_node(cls):
         """
             Run Topological sort and exec them one by one
         """
