@@ -43,9 +43,9 @@ class AxiumEdge:
     @classmethod
     def from_dict(cls, data):
         return cls(
-            node_id=data["node_id"],
-            src_output=data["src_output"],
-            dst_param=data["dst_param"]
+            node_id    = data["node_id"],
+            src_output = data["src_output"],
+            dst_param  = data["dst_param"]
         )
 
 class AxiumGraph:
