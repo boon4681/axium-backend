@@ -77,6 +77,8 @@ class AxiumProjectManager:
             config_dir = Path.home() / '.axium'
 
         recent_file = config_dir / 'recent_projects.json'
+        if not config_dir.exists():
+            os.mkdir(config_dir)
 
         if not recent_file.exists():
             with open(recent_file, 'w') as f:
