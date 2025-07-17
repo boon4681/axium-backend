@@ -68,74 +68,6 @@ class AxiumProjectManager:
         with open(axium_path, 'w') as f:
             json.dump(project_file_obj.to_dict(), f, indent=2)
 
-
-    @staticmethod
-    def read_project_opening_tab(project_dir: str | Path):
-        """
-            read from AppData
-        """
-        if platform.system() == "Windows":
-            config_dir = Path(os.getenv('APPDATA', Path.home() / 'AppData' / 'Roaming')) / 'axm'
-        else:
-            config_dir = Path.home() / '.axm'
-
-        if not config_dir.exists():
-            os.mkdir(config_dir)
-
-        project_opened_tabs = config_dir / 'project_opened_tabs.json'
-        if not project_opened_tabs.exists():
-            with open(project_opened_tabs, 'w') as f:
-                json.dump([], f)
-
-        return project_opened_tabs
-
-    @staticmethod
-    def get_project_tabs(project_dir: str | Path):
-        project_opened_tabs_path = AxiumProjectManager.read_project_opening_tab(project_dir)
-        with open(project_opened_tabs_path, "r") as f:
-            try:
-                opened_tabs = json.load(f)
-                return opened_tabs
-        
-            except Exception:
-                return {}
-
-    @staticmethod
-    def open_project_tab(project_dir: str | Path, path: str | Path):
-        project_opened_tabs_path = AxiumProjectManager.read_project_opening_tab(project_dir)
-        path = str(path)
-        
-        with open(project_opened_tabs_path, "r") as f:
-            try:
-                opened_tabs = json.load(f)
-            except Exception:
-                opened_tabs = []
-        
-        if path not in opened_tabs:
-            opened_tabs.append(path)
-            with open(project_opened_tabs_path, "w") as f:
-                json.dump(opened_tabs, f, indent=2)
-                
-        return opened_tabs
-
-    @staticmethod
-    def close_project_tab(project_dir: str | Path, path: str | Path):
-        project_opened_tabs_path = AxiumProjectManager.read_project_opening_tab(project_dir)
-        path = str(path)
-        
-        with open(project_opened_tabs_path, "r") as f:
-            try:
-                opened_tabs = json.load(f)
-            except Exception:
-                opened_tabs = []
-        
-        if path in opened_tabs:
-            opened_tabs.remove(path)
-            with open(project_opened_tabs_path, "w") as f:
-                json.dump(opened_tabs, f, indent=2)
-        
-        return opened_tabs
-
     @staticmethod
     def read_recent_projects_file():
         if platform.system() == "Windows":
@@ -221,6 +153,15 @@ class AxiumProjectManager:
     def open_file(file_dir: str | Path):
         with open(file_dir, 'r') as file:
             return file.read()
+        
+    @staticmethod
+    def save_file(file_dir: str | Path, content: str):
+        file_path = Path(file_dir)
+
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write(content)
+
+        return str(file_path)
         
     @staticmethod
     def read_list_tabs():

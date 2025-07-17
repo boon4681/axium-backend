@@ -19,6 +19,10 @@ class ProjectListFileBody(BaseModel):
 class ProjectOpenFileBody(BaseModel):
     path: str  # project file path
 
+class ProjectSaveFileBody(BaseModel):
+    path: str  # project file path
+    content: str
+
 class ProjectTabBody(BaseModel):
     project_dir: str  # project file path
 
