@@ -6,7 +6,7 @@ class Node(BaseModel):
     template_id: str
     required:   List['Edge']
     parameters: Optional[Dict[str, str | int]] = None
-    property:   Optional[Dict[str, str | int]] = None
+    parameter:   Optional[Dict[str, str | int]] = None
 
 class Edge(BaseModel):
     id: int

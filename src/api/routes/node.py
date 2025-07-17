@@ -4,7 +4,7 @@ from axium import Axium
 
 router = APIRouter(prefix="/node", tags=["Node"])
 
-@router.get("/")
+@router.get("")
 def get_all_nodes():
     return Axium.get_all_node()
 

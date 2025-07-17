@@ -17,11 +17,11 @@ class AxiumTemplate(metaclass=AxiumTemplateRegisterMeta):
 
     input:    dict[str, type] = {}
     output:   dict[str, type] = {}
-    property: dict[str, type] = {}
+    parameter: dict[str, type] = {}
 
     input_alias:    dict[str, str] = {}
     output_alias:   dict[str, str] = {}
-    property_alias: dict[str, str] = {}
+    parameter_alias: dict[str, str] = {}
 
     object = {}
 
@@ -30,7 +30,7 @@ class AxiumTemplate(metaclass=AxiumTemplateRegisterMeta):
         return {}
 
     @classmethod
-    def validate_property(cls, *args, **kwargs):
+    def validate_parameter(cls, *args, **kwargs):
         return {}
 
     @classmethod
@@ -65,12 +65,12 @@ class AxiumTemplate(metaclass=AxiumTemplateRegisterMeta):
                 }
                 for key, value in cls.output.items()
             ],
-            "property": [
+            "parameter": [
                 {
-                    "name": cls.property_alias[key] if key in cls.output_alias else key,
+                    "name": cls.parameter_alias[key] if key in cls.output_alias else key,
                     "type": value.__name__
                 }
-                for key, value in cls.property.items()
+                for key, value in cls.parameter.items()
             ],
         }
 
@@ -87,10 +87,10 @@ class AxiumTemplate(metaclass=AxiumTemplateRegisterMeta):
                 if not is_pass:
                     raise RuntimeError(msg)
                 
-        # Custom property check
-        validate_property_res = cls.validate_property(*args, **kwargs)
-        if len(validate_property_res) > 0:
-            for _, (is_pass, msg) in validate_property_res.items():
+        # Custom parameter check
+        validate_parameter_res = cls.validate_parameter(*args, **kwargs)
+        if len(validate_parameter_res) > 0:
+            for _, (is_pass, msg) in validate_parameter_res.items():
                 if not is_pass:
                     raise RuntimeError(msg)
         

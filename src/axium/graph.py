@@ -9,13 +9,13 @@ class AxiumNode:
                 id: int,
                 template_id: str,
                 parameters: dict,
-                property: dict,
+                parameter: dict,
                 required: list
                 ):
         self.id = id
         self.template_id = template_id
         self.parameters  = parameters
-        self.property = property
+        self.parameter = parameter
         self.required = required
         self.last_result = {}
 
@@ -26,7 +26,7 @@ class AxiumNode:
             template_id = data["template_id"],
             required    = data["required"],
             parameters  = data["parameters"],
-            property    = data["property"],
+            parameter    = data["parameter"],
         )
 
 class AxiumEdge:

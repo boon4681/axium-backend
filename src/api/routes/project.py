@@ -5,7 +5,7 @@ from axium.project import AxiumProjectManager, AxiumProjectStateSave
 
 router = APIRouter(prefix="/project", tags=["Project"])
 
-@router.post("/")
+@router.post("")
 def create_project(body: ProjectCreateBody):
     try:
         project_dir = AxiumProjectManager.create_project(body.path, body.name)
@@ -14,16 +14,7 @@ def create_project(body: ProjectCreateBody):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/open")
-def open_project(body: ProjectOpenBody):
-    try:
-        project = AxiumProjectManager.open_project(body.path)
-        return {"project": project.to_dict()}
-
-    except Exception as e:
-        raise HTTPException(status_code=404, detail=str(e))
-
-@router.patch("/")
+@router.patch("")
 def save_project(body: ProjectSaveBody):
     try:
         project = AxiumProjectManager.open_project(body.path)
@@ -37,9 +28,14 @@ def save_project(body: ProjectSaveBody):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/list-file")
-def create_file(body: ProjectListFileBody):
-    return AxiumProjectManager.list_files_in_project_dir(body.path)
+@router.post("/open")
+def open_project(body: ProjectOpenBody):
+    try:
+        project = AxiumProjectManager.open_project(body.path)
+        return {"project": project.to_dict()}
+
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 @router.get("/recent")
 def get_recent_projects():
@@ -49,3 +45,7 @@ def get_recent_projects():
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/file/list")
+def create_file(body: ProjectListFileBody):
+    return AxiumProjectManager.list_files_in_project_dir(body.path)

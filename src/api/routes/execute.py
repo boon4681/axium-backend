@@ -5,7 +5,7 @@ from axium.graph import AxiumGraph
 
 router = APIRouter(prefix="/execute", tags=["Execute"])
 
-@router.post("/")
+@router.post("")
 def run_graph(body: ExecuteBody):
     try:
         nodes = body.model_dump().get("nodes")
@@ -20,6 +20,6 @@ def run_graph(body: ExecuteBody):
             }
             for node in result
         ]
-    
+        
     except Exception as e:
         return HTTPException(status_code=500, detail=str(e))
