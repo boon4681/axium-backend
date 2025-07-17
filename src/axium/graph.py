@@ -4,10 +4,6 @@ class AxiumGraphExucutor:
     graph = defaultdict(list)
     node = set()
 
-    # @classmethod
-    # def add_node(cls, node):
-
-
     @classmethod
     def add_edge(cls, u, v):
         cls.graph[u].append(v)
@@ -21,8 +17,11 @@ class AxiumGraphExucutor:
     @classmethod
     def run(cls):
         sorted_node = cls.get_topological_sorted_node()
+
         for node in sorted_node:
             print(node)
+
+        
 
     @classmethod
     def get_topological_sorted_node(cls):
