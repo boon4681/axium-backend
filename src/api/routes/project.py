@@ -1,8 +1,8 @@
-import os
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from axium.project import AxiumProjectManager, AxiumProjectFile, AxiumProjectStateSave
-from typing import List, Optional
+from typing import Optional
+
+from axium.project import AxiumProjectManager, AxiumProjectStateSave
 
 router = APIRouter(prefix="/project", tags=["Project"])
 
@@ -16,8 +16,6 @@ class ProjectOpenBody(BaseModel):
 class ProjectSaveBody(BaseModel):
     path: str  # project folder path
     name: str
-    created_date: Optional[str] = None
-    last_modified: Optional[str] = None
     state: Optional[dict] = None
 
 @router.post("/")
@@ -33,7 +31,7 @@ def create_project(body: ProjectCreateBody):
 def open_project(body: ProjectOpenBody):
     try:
         project = AxiumProjectManager.open_project(body.path)
-        return { "project": project.to_dict()}
+        return {"project": project.to_dict()}
 
     except Exception as e:
         raise HTTPException(status_code=404, detail=str(e))
@@ -41,15 +39,14 @@ def open_project(body: ProjectOpenBody):
 @router.patch("/")
 def save_project(body: ProjectSaveBody):
     try:
-        project_file = AxiumProjectFile(
-            name=body.name,
-            created_date=body.created_date,
-            last_modified=body.last_modified,
-            state=AxiumProjectStateSave.from_dict(body.state or {})
-        )
-        AxiumProjectManager.save_project(body.path, project_file)
+        project = AxiumProjectManager.open_project(body.path)
         
-        return {"status": "success"}
+        project.name  = body.name
+        project.state = AxiumProjectStateSave.from_dict(body.state)
+        
+        AxiumProjectManager.save_project(body.path, project)
+        
+        return {"project": project.to_dict()}
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
