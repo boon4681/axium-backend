@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.svm import SVR
+from sklearn.tree import DecisionTreeRegressor
 
 
 class RegressionModelSelector:
@@ -9,7 +10,8 @@ class RegressionModelSelector:
         self.models = {
             'linear_regression': LinearRegression(),
             'random_forest': RandomForestRegressor(),
-            'svm': SVR()
+            'svm': SVR(),
+            'decision_tree': DecisionTreeRegressor()
         }
 
     def get_model(self, model_name: str):

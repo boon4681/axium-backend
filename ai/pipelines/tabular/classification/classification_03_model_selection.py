@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
 
 
 class ClassificationModelSelector:
@@ -9,7 +10,8 @@ class ClassificationModelSelector:
         self.models = {
             'logistic_regression': LogisticRegression(),
             'random_forest': RandomForestClassifier(),
-            'svm': SVC()
+            'svm': SVC(),
+            'decision_tree': DecisionTreeClassifier()
         }
 
     def get_model(self, model_name: str):
