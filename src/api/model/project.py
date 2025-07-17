@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Dict
 from pydantic import BaseModel
 
 class ProjectCreateBody(BaseModel):
@@ -11,7 +11,17 @@ class ProjectOpenBody(BaseModel):
 class ProjectSaveBody(BaseModel):
     path: str  # project folder path
     name: str
-    state: Optional[dict] = None
+    state: Optional[Dict] = None
 
 class ProjectListFileBody(BaseModel):
     path: str  # project folder path
+
+class ProjectOpenFileBody(BaseModel):
+    path: str  # project file path
+
+class ProjectTabBody(BaseModel):
+    project_dir: str  # project file path
+
+class ProjectTabIOBody(BaseModel):
+    project_dir: str  # project file path
+    file_path: str

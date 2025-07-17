@@ -3,14 +3,13 @@ import json
 from datetime import datetime
 from pathlib import Path
 import platform
-import uuid
 
 class AxiumProjectManager:
 
     @staticmethod
     def create_project(base_dir: str | Path, project_name: str):
         """
-        Create a new project folder in the user-selected base_dir, and place a .axium file inside.
+        Create a new project folder in the user-selected base_dir, and place a .axm file inside.
         Returns the path to the created project folder.
         """
         base_dir = Path(base_dir)
@@ -21,7 +20,7 @@ class AxiumProjectManager:
 
         project_dir.mkdir(parents=True, exist_ok=True)
 
-        project_file = project_dir / f"{project_name}.axium"
+        project_file = project_dir / f"{project_name}.axm"
         project = AxiumProjectFile(name=project_name)
         
         with open(project_file, 'w') as f:
@@ -34,7 +33,7 @@ class AxiumProjectManager:
     @staticmethod
     def open_project(project_dir: str | Path):
         """
-        Open a project by folder path. Loads the .axium file inside the folder.
+        Open a project by folder path. Loads the .axm file inside the folder.
         """
         
         project_dir = Path(project_dir)
@@ -53,14 +52,14 @@ class AxiumProjectManager:
     @staticmethod
     def save_project(project_dir: str | Path, project_file_obj):
         """
-        Save the project file object to the .axium file in the given folder.
+        Save the project file object to the .axm file in the given folder.
         """
         project_dir = Path(project_dir)
-        axium_files = list(project_dir.glob("*.axium"))
+        axium_files = list(project_dir.glob("*.axm"))
         
         if not axium_files:
-            # If no .axium file, create one with the project name
-            axium_path = project_dir / f"{project_file_obj.name}.axium"
+            # If no .axm file, create one with the project name
+            axium_path = project_dir / f"{project_file_obj.name}.axm"
         else:
             axium_path = axium_files[0]
         
@@ -69,12 +68,80 @@ class AxiumProjectManager:
         with open(axium_path, 'w') as f:
             json.dump(project_file_obj.to_dict(), f, indent=2)
 
+
+    @staticmethod
+    def read_project_opening_tab(project_dir: str | Path):
+        """
+            read from AppData
+        """
+        if platform.system() == "Windows":
+            config_dir = Path(os.getenv('APPDATA', Path.home() / 'AppData' / 'Roaming')) / 'axm'
+        else:
+            config_dir = Path.home() / '.axm'
+
+        if not config_dir.exists():
+            os.mkdir(config_dir)
+
+        project_opened_tabs = config_dir / 'project_opened_tabs.json'
+        if not project_opened_tabs.exists():
+            with open(project_opened_tabs, 'w') as f:
+                json.dump([], f)
+
+        return project_opened_tabs
+
+    @staticmethod
+    def get_project_tabs(project_dir: str | Path):
+        project_opened_tabs_path = AxiumProjectManager.read_project_opening_tab(project_dir)
+        with open(project_opened_tabs_path, "r") as f:
+            try:
+                opened_tabs = json.load(f)
+                return opened_tabs
+        
+            except Exception:
+                return {}
+
+    @staticmethod
+    def open_project_tab(project_dir: str | Path, path: str | Path):
+        project_opened_tabs_path = AxiumProjectManager.read_project_opening_tab(project_dir)
+        path = str(path)
+        
+        with open(project_opened_tabs_path, "r") as f:
+            try:
+                opened_tabs = json.load(f)
+            except Exception:
+                opened_tabs = []
+        
+        if path not in opened_tabs:
+            opened_tabs.append(path)
+            with open(project_opened_tabs_path, "w") as f:
+                json.dump(opened_tabs, f, indent=2)
+                
+        return opened_tabs
+
+    @staticmethod
+    def close_project_tab(project_dir: str | Path, path: str | Path):
+        project_opened_tabs_path = AxiumProjectManager.read_project_opening_tab(project_dir)
+        path = str(path)
+        
+        with open(project_opened_tabs_path, "r") as f:
+            try:
+                opened_tabs = json.load(f)
+            except Exception:
+                opened_tabs = []
+        
+        if path in opened_tabs:
+            opened_tabs.remove(path)
+            with open(project_opened_tabs_path, "w") as f:
+                json.dump(opened_tabs, f, indent=2)
+        
+        return opened_tabs
+
     @staticmethod
     def read_recent_projects_file():
         if platform.system() == "Windows":
-            config_dir = Path(os.getenv('APPDATA', Path.home() / 'AppData' / 'Roaming')) / 'axium'
+            config_dir = Path(os.getenv('APPDATA', Path.home() / 'AppData' / 'Roaming')) / 'axm'
         else:
-            config_dir = Path.home() / '.axium'
+            config_dir = Path.home() / '.axm'
 
         recent_file = config_dir / 'recent_projects.json'
         if not config_dir.exists():
@@ -83,7 +150,6 @@ class AxiumProjectManager:
         if not recent_file.exists():
             with open(recent_file, 'w') as f:
                 json.dump([], f)
-                return []
         
         return recent_file
 
@@ -119,7 +185,7 @@ class AxiumProjectManager:
         return AxiumProjectManager.get_recent_projects()
     
     @staticmethod
-    def list_files_in_project_dir(project_dir: str | Path):
+    def list_files(project_dir: str | Path):
         """
             Recursively call file and folder in project directory
         """
@@ -151,6 +217,73 @@ class AxiumProjectManager:
 
         return walk_dir(project_dir)
 
+    @staticmethod
+    def open_file(file_dir: str | Path):
+        with open(file_dir, 'r') as file:
+            return file.read()
+        
+    @staticmethod
+    def read_list_tabs():
+        if platform.system() == "Windows":
+            config_dir = Path(os.getenv('APPDATA', Path.home() / 'AppData' / 'Roaming')) / 'axm'
+        else:
+            config_dir = Path.home() / '.axm'
+
+        if not config_dir.exists():
+            os.mkdir(config_dir)
+
+        project_tabs = config_dir / 'project_tabs.json'
+
+        if not project_tabs.exists():
+            with open(project_tabs, 'w') as f:
+                json.dump({}, f)
+        
+        return project_tabs
+
+    @staticmethod
+    def list_tab(project_dir: str | Path):
+        list_tab_path = AxiumProjectManager.read_list_tabs()
+
+        with open(list_tab_path, 'r') as f:
+            obj = json.load(f)
+            return obj[str(project_dir)]
+
+        return []
+
+    @staticmethod
+    def open_tab(project_dir: str | Path, path: str):
+        recent_tab = AxiumProjectManager.list_tab(project_dir)
+
+        if path not in recent_tab:
+            recent_tab.append(path)
+
+        list_tab_path = AxiumProjectManager.read_list_tabs()
+        with open(list_tab_path, "r") as f:
+            obj = json.load(f)
+
+        obj[project_dir] = recent_tab
+        with open(list_tab_path, "w") as f:
+            json.dump(obj, f, indent=2)
+        
+        return AxiumProjectManager.list_tab(project_dir)
+    
+    @staticmethod
+    def close_tab(project_dir: str | Path, path: str):
+        recent_tab = AxiumProjectManager.list_tab(project_dir)
+
+        if path in recent_tab:
+            recent_tab.remove(path)
+
+        list_tab_path = AxiumProjectManager.read_list_tabs()
+        with open(list_tab_path, "r") as f:
+            obj = json.load(f)
+
+        obj[project_dir] = recent_tab
+        with open(list_tab_path, "w") as f:
+            json.dump(obj, f, indent=2)
+        
+        return AxiumProjectManager.list_tab(project_dir)
+    
 class AxiumProjectFile:
     def __init__(self, name, created_date=None, last_modified=None, state=None):
         self.name = name

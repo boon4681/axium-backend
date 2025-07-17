@@ -1,8 +1,8 @@
 import re
+from typing import List
 
-def split_camel_case(text: str):
+def split_camel_case(text: str) -> List[str]:
     """
-        find all the word that have upper char follow by lower chars
+    Split a CamelCase string into a list of words.
     """
-    
     return re.findall(r'[A-Z](?:[a-z]+|[A-Z]*(?=[A-Z]|$))', text)

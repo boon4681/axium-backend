@@ -30,4 +30,5 @@ async def scalar_html():
         openapi_url=api.openapi_url,
         title=api.title,
     )
+
 api.mount("/", sio_app)
