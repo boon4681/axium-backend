@@ -80,18 +80,23 @@ class AxiumTemplate(metaclass=AxiumTemplateRegisterMeta):
             Do not override, this is for lib to run result
         """
         
+        # Custom input check
         validate_input_res = cls.validate_input(*args, **kwargs)
-
         if len(validate_input_res) > 0:
-            for param, (is_pass, msg) in validate_input_res.items():
-                if is_pass: continue
+            for _, (is_pass, msg) in validate_input_res.items():
+                if not is_pass:
+                    raise RuntimeError(msg)
                 
-                print(param, msg)
-
-            return 
-
+        # Custom property check
         validate_property_res = cls.validate_property(*args, **kwargs)
-        if validate_property_res is not None:
-            return
+        if len(validate_property_res) > 0:
+            for _, (is_pass, msg) in validate_property_res.items():
+                if not is_pass:
+                    raise RuntimeError(msg)
+        
+        result = cls.run(*args, **kwargs)
 
-        pass
+        keys = cls.output.keys()
+        values = list(result) if hasattr(result, "__iter__") else [result]
+        
+        return dict(zip(keys, values))

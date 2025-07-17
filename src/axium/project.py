@@ -3,6 +3,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 import platform
+import uuid
 
 class AxiumProjectManager:
 
@@ -115,6 +116,39 @@ class AxiumProjectManager:
 
         return AxiumProjectManager.get_recent_projects()
     
+    @staticmethod
+    def list_files_in_project_dir(project_dir: str | Path):
+        """
+            Recursively call file and folder in project directory
+        """
+
+        project_dir = Path(project_dir)
+        if not project_dir.exists():
+            raise FileNotFoundError("Project directory is not found")
+
+        def walk_dir(current_path: Path):
+            file_tree = []
+
+            # Sort by folder-order-first then sort by name
+            for entry in sorted(current_path.iterdir(), key=lambda x: (x.is_file(), x.name)):
+                if entry.is_file():
+                    file_tree.append({
+                        "type": "file",
+                        "path": entry.absolute(),
+                        "name": entry.name
+                    })
+                elif entry.is_dir():
+                    file_tree.append({
+                        "type":  "folder",
+                        "path":  entry.absolute(),
+                        "name":  entry.name,
+                        "files": walk_dir(entry)
+                    })
+
+            return file_tree
+
+        return walk_dir(project_dir)
+
 class AxiumProjectFile:
     def __init__(self, name, created_date=None, last_modified=None, state=None):
         self.name = name

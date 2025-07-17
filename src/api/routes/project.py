@@ -1,22 +1,9 @@
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
-from typing import Optional
 
+from api.model.project import ProjectCreateBody, ProjectListFileBody, ProjectOpenBody, ProjectSaveBody
 from axium.project import AxiumProjectManager, AxiumProjectStateSave
 
 router = APIRouter(prefix="/project", tags=["Project"])
-
-class ProjectCreateBody(BaseModel):
-    name: str
-    path: str  # base directory
-
-class ProjectOpenBody(BaseModel):
-    path: str  # project folder path
-
-class ProjectSaveBody(BaseModel):
-    path: str  # project folder path
-    name: str
-    state: Optional[dict] = None
 
 @router.post("/")
 def create_project(body: ProjectCreateBody):
@@ -45,11 +32,14 @@ def save_project(body: ProjectSaveBody):
         project.state = AxiumProjectStateSave.from_dict(body.state)
         
         AxiumProjectManager.save_project(body.path, project)
-        
         return {"project": project.to_dict()}
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/list-file")
+def create_file(body: ProjectListFileBody):
+    return AxiumProjectManager.list_files_in_project_dir(body.path)
 
 @router.get("/recent")
 def get_recent_projects():

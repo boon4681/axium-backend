@@ -2,6 +2,7 @@ from axium.template import AxiumTemplate
 
 class PositivePlusNegative(AxiumTemplate):
     id = "PosNeg"
+    category = "math"
 
     input = {
         "a": int,

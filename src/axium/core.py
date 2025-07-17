@@ -2,8 +2,6 @@ import importlib
 import logging
 from pathlib import Path
 
-from axium.utils import split_camel_case
-
 logger = logging.getLogger("Axium's Backend")
 logger.setLevel(logging.INFO)
 

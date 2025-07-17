@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 
 from axium import Axium
 
-router = APIRouter(prefix="/nodes", tags=["Nodes"])
+router = APIRouter(prefix="/node", tags=["Node"])
 
 @router.get("/")
 def get_all_nodes():
