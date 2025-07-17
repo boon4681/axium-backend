@@ -1,8 +1,9 @@
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier, ExtraTreesClassifier
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.neural_network import MLPClassifier
 
 
 class ClassificationModelSelector:
@@ -11,7 +12,11 @@ class ClassificationModelSelector:
             'logistic_regression': LogisticRegression(),
             'random_forest': RandomForestClassifier(),
             'svm': SVC(),
-            'decision_tree': DecisionTreeClassifier()
+            'decision_tree': DecisionTreeClassifier(),
+            'gradient_boosting': GradientBoostingClassifier(),
+            'ada_boost': AdaBoostClassifier(),
+            'extra_trees': ExtraTreesClassifier(),
+            'neural_network': MLPClassifier()
         }
 
     def get_model(self, model_name: str):

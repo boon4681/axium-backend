@@ -1,8 +1,9 @@
 import pandas as pd
 from sklearn.linear_model import LinearRegression
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor, AdaBoostRegressor, ExtraTreesRegressor
 from sklearn.svm import SVR
 from sklearn.tree import DecisionTreeRegressor
+from sklearn.neural_network import MLPRegressor
 
 
 class RegressionModelSelector:
@@ -11,7 +12,11 @@ class RegressionModelSelector:
             'linear_regression': LinearRegression(),
             'random_forest': RandomForestRegressor(),
             'svm': SVR(),
-            'decision_tree': DecisionTreeRegressor()
+            'decision_tree': DecisionTreeRegressor(),
+            'gradient_boosting': GradientBoostingRegressor(),
+            'ada_boost': AdaBoostRegressor(),
+            'extra_trees': ExtraTreesRegressor(),
+            'neural_network': MLPRegressor()
         }
 
     def get_model(self, model_name: str):
