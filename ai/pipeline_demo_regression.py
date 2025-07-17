@@ -8,6 +8,7 @@ from pipelines.tabular.regression.regression_01_load_data import RegressionDataL
 from pipelines.tabular.regression.regression_03_model_selection import RegressionModelSelector
 from pipelines.tabular.regression.regression_04_model_training import RegressionModelTrainer
 from pipelines.tabular.regression.regression_05_evaluation import RegressionEvaluator
+from pipelines.tabular.regression.regression_06_deployment import RegressionModelDeployment
 import sys
 import os
 # sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -118,6 +119,10 @@ def demo_regression_pipeline():
         'max_depth': [None, 10, 20]
     })
 
+    # Save the trained model
+    deployment = RegressionModelDeployment()
+    deployment.save_model(trained_model, "regression_model.joblib")
+
     # Evaluation
     evaluator = RegressionEvaluator(trained_model)
     evaluation_results = evaluator.evaluate(
@@ -131,18 +136,14 @@ def demo_regression_pipeline():
 def main():
     """Main demo function"""
 
-    # Demo regression
-    reg_results = demo_regression_with_kwargs()
+    # # Demo regression
+    # reg_results = demo_regression_with_kwargs()
 
     # Demo regression pipeline
     pipeline_results = demo_regression_pipeline()
 
-    print("\n" + "="*70)
-    print("REGRESSION DEMO COMPLETED!")
-    print("="*70)
-
     return {
-        'regression_results': reg_results,
+        # 'regression_results': reg_results,
         'pipeline_results': pipeline_results
     }
 
