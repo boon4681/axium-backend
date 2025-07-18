@@ -8,13 +8,13 @@ class AxiumNode:
                 self,
                 id: int,
                 template_id: str,
-                parameters: dict,
+                input: dict,
                 parameter: dict,
                 required: list
                 ):
         self.id = id
         self.template_id = template_id
-        self.parameters  = parameters
+        self.input  = input
         self.parameter = parameter
         self.required = required
         self.last_result = {}
@@ -25,8 +25,8 @@ class AxiumNode:
             id          = data["id"],
             template_id = data["template_id"],
             required    = data["required"],
-            parameters  = data["parameters"],
-            parameter    = data["parameter"],
+            input       = data["input"],
+            parameter   = data["parameter"],
         )
 
 class AxiumEdge:
@@ -34,18 +34,18 @@ class AxiumEdge:
                 self,
                 node_id:    int,
                 src_output: str,
-                dst_param:  str
+                dst_input:  str
                 ):
         self.node_id = node_id
         self.src_output = src_output
-        self.dst_param = dst_param
+        self.dst_input = dst_input
 
     @classmethod
     def from_dict(cls, data):
         return cls(
             node_id    = data["node_id"],
             src_output = data["src_output"],
-            dst_param  = data["dst_param"]
+            dst_input  = data["dst_input"]
         )
 
 class AxiumGraph:
@@ -91,12 +91,12 @@ class AxiumGraph:
             for req in node.required:
                 node_req_id         = req["id"]
                 node_req_param_name = req["src_output"]
-                node_param_name     = req["dst_param"]
+                node_input_name     = req["dst_input"]
 
                 node_req = cls.axium_node[node_req_id]
-                node.parameters[node_param_name] = node_req.last_result[node_req_param_name]
+                node.input[node_input_name] = node_req.last_result[node_req_param_name]
 
-            node.last_result = template.execute(**node.parameters)
+            node.last_result = template.execute(**node.parameter, **node.input)
 
         return list(cls.axium_node.values())
 

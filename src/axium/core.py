@@ -49,5 +49,7 @@ class Axium:
 
     @classmethod
     def get_all_node(cls):
-        return [template.object for template in cls.registry.values()]
+        return {
+            "nodes": [template.object for template in cls.registry.values()]
+        }
     

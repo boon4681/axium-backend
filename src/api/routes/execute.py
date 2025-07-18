@@ -13,13 +13,15 @@ def run_graph(body: ExecuteBody):
         AxiumGraph.load_from_object(nodes)
         result = AxiumGraph.run()
 
-        return [
-            {
-                "id": node.id,
-                **node.last_result
-            }
-            for node in result
-        ]
+        return {
+            "node_results": [
+                {
+                    "id": node.id,
+                    **node.last_result
+                }
+                for node in result
+            ]
+        }
         
     except Exception as e:
         return HTTPException(status_code=500, detail=str(e))
