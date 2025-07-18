@@ -189,10 +189,10 @@ class AxiumProjectManager:
             obj = json.load(f)
             if project_dir in obj:
                 return obj[str(project_dir)]
-            # else:
-            #     obj[project_dir] = []
-            # with open(list_tab_path, 'w') as fs:
-            #     fs.write(json.dumps(obj))
+            else:
+                obj[str(project_dir)] = []
+            with open(list_tab_path, 'w') as fs:
+                fs.write(json.dumps(obj))
 
         return []
 
