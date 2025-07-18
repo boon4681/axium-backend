@@ -166,7 +166,7 @@ class AxiumProjectManager:
     @staticmethod
     def read_list_tabs():
         if platform.system() == "Windows":
-            config_dir = Path(os.getenv('APPDATA', Path.home() / 'AppData' / 'Roaming')) / 'axm'
+            config_dir = Path(os.getenv('APPDATA', Path.home() / 'AppData' / 'Roaming')) / 'axium'
         else:
             config_dir = Path.home() / '.axm'
 
@@ -187,8 +187,12 @@ class AxiumProjectManager:
 
         with open(list_tab_path, 'r') as f:
             obj = json.load(f)
-            if str(project_dir) in obj:
+            if project_dir in obj:
                 return obj[str(project_dir)]
+            # else:
+            #     obj[project_dir] = []
+            # with open(list_tab_path, 'w') as fs:
+            #     fs.write(json.dumps(obj))
 
         return []
 
