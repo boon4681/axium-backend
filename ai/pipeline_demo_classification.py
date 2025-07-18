@@ -205,12 +205,70 @@ def demo_classification_pipeline():
     visualizer.plot_all_metrics(
         X_train, y_train, X_test, y_test,
         feature_names=list(X_train.columns),
-        class_names=['Malignant', 'Benign'],
-        save_dir='classification_visualizations',
-        show_plots=False
+        class_names=['Malignant', 'Benign']
     )
 
     return evaluation_results
+
+
+def demo_classification_visualization():
+    """Demo individual visualization capabilities for classification"""
+    print("\n" + "="*70)
+    print("CLASSIFICATION VISUALIZATION DEMO")
+    print("="*70)
+
+    # Load and prepare data
+    loader = ClassificationDataLoader()
+    X, y = loader.load_sample_dataset("iris")  # Using iris for multiclass demo
+
+    # Preprocessing
+    preprocessor = ClassificationPreprocessor()
+    processed_data = preprocessor.full_preprocessing_pipeline(
+        X, y,
+        test_size=0.3,
+        missing_value_strategy='mean',
+        scaling_method='standard',
+        select_features=False
+    )
+
+    X_train, X_test = processed_data['X_train'], processed_data['X_test']
+    y_train, y_test = processed_data['y_train'], processed_data['y_test']
+
+    # Train a Random Forest model
+    selector = ClassificationModelSelector()
+    model = selector.get_model('random_forest')
+    trainer = ClassificationModelTrainer(model)
+    trained_model = trainer.train_model(X_train, y_train)
+
+    # Create visualizer
+    visualizer = ClassificationVisualizer(trained_model)
+
+    # Individual visualization demos
+    print("\n1. Confusion Matrix")
+    print("-" * 40)
+    visualizer.plot_confusion_matrix(X_test, y_test,
+                                     class_names=['Setosa', 'Versicolor', 'Virginica'])
+
+    print("\n2. ROC Curve")
+    print("-" * 40)
+    visualizer.plot_roc_curve(X_test, y_test)
+
+    print("\n3. Learning Curve")
+    print("-" * 40)
+    X_full = pd.concat([X_train, X_test])
+    y_full = pd.concat([y_train, y_test])
+    visualizer.plot_learning_curve(X_full, y_full)
+
+    print("\n4. Feature Importance")
+    print("-" * 40)
+    visualizer.plot_feature_importance(list(X_train.columns))
+
+    print("\n5. Classification Report")
+    print("-" * 40)
+    visualizer.plot_classification_report(X_test, y_test,
+                                          class_names=['Setosa', 'Versicolor', 'Virginica'])
+
+    return trained_model
 
 
 def main():
@@ -219,8 +277,15 @@ def main():
     # Demo classification pipeline with visualization
     clf_pipeline_results = demo_classification_pipeline()
 
+    # Demo individual visualization capabilities
+    print("\n" + "="*70)
+    print("RUNNING INDIVIDUAL VISUALIZATION DEMOS")
+    print("="*70)
+    clf_visualization_model = demo_classification_visualization()
+
     return {
-        'classification_pipeline_results': clf_pipeline_results
+        'classification_pipeline_results': clf_pipeline_results,
+        'visualization_model': clf_visualization_model
     }
 
 
