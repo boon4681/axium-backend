@@ -5,9 +5,15 @@ Shows how to use the improved preprocessing methods with direct parameter passin
 
 from pipelines.tabular.regression.regression_02_preprocessing import RegressionPreprocessor
 from pipelines.tabular.regression.regression_01_load_data import RegressionDataLoader
+from pipelines.tabular.regression.regression_03_model_selection import RegressionModelSelector
+from pipelines.tabular.regression.regression_04_model_training import RegressionModelTrainer
+from pipelines.tabular.regression.regression_05_evaluation import RegressionEvaluator
+from pipelines.tabular.regression.regression_06_deployment import RegressionModelDeployment
+from pipelines.tabular.regression.regression_07_visualization import RegressionVisualizer
+import pandas as pd
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 
 def demo_regression_with_kwargs():
@@ -78,18 +84,82 @@ def demo_regression_with_kwargs():
     return result1, result2, result3
 
 
+def demo_regression_pipeline():
+    """Demo end-to-end regression pipeline with preprocessing, model selection, training, and evaluation"""
+    print("\n" + "="*70)
+    print("REGRESSION PIPELINE DEMO")
+    print("="*70)
+
+    # Load data
+    loader = RegressionDataLoader()
+    X, y = loader.load_sample_dataset("california_housing")
+
+    # Preprocessing
+    preprocessor = RegressionPreprocessor()
+    processed_data = preprocessor.full_preprocessing_pipeline(
+        X, y,
+        test_size=0.2,
+        missing_value_strategy='mean',
+        scaling_method='standard',
+        remove_outliers=False,
+        transform_target=False,
+        select_features=False
+    )
+
+    X_train, X_test = processed_data['X_train'], processed_data['X_test']
+    y_train, y_test = processed_data['y_train'], processed_data['y_test']
+
+    # Model selection
+    selector = RegressionModelSelector()
+    selector.list_models()  # List available models
+    model = selector.get_model('random_forest')
+
+    # Model training
+    trainer = RegressionModelTrainer(model)
+    trained_model = trainer.train_model(X_train, y_train, param_grid={
+        'n_estimators': [10, 50, 100],
+        'max_depth': [None, 10, 20]
+    })
+
+    # Save the trained model
+    deployment = RegressionModelDeployment()
+    deployment.save_model(trained_model, "regression_model.joblib")
+
+    # Evaluation
+    evaluator = RegressionEvaluator(trained_model)
+    evaluation_results = evaluator.evaluate(
+        X_test, y_test, metrics=['mse', 'mae', 'r2'])
+
+    print(f"Evaluation results: {evaluation_results}")
+
+    # Visualization
+    print("\n" + "="*70)
+    print("GENERATING VISUALIZATIONS")
+    print("="*70)
+
+    visualizer = RegressionVisualizer(trained_model)
+
+    # Generate all visualizations
+    visualization_metrics = visualizer.plot_all_metrics(
+        X_train, y_train, X_test, y_test,
+        feature_names=list(X_train.columns),
+        save_dir='regression_visualizations',
+        show_plots=False
+    )
+
+    print(f"Visualization metrics: {visualization_metrics}")
+
+    return evaluation_results
+
+
 def main():
     """Main demo function"""
 
-    # Demo regression
-    reg_results = demo_regression_with_kwargs()
-
-    print("\n" + "="*70)
-    print("PREPROCESSING WITH KWARGS COMPLETED!")
-    print("="*70)
+    # Demo regression pipeline with visualization
+    pipeline_results = demo_regression_pipeline()
 
     return {
-        'regression_results': reg_results
+        'pipeline_results': pipeline_results
     }
 
 
