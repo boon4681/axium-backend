@@ -187,7 +187,8 @@ class AxiumProjectManager:
 
         with open(list_tab_path, 'r') as f:
             obj = json.load(f)
-            return obj[str(project_dir)]
+            if str(project_dir) in obj:
+                return obj[str(project_dir)]
 
         return []
 

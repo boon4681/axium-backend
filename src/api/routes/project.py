@@ -42,25 +42,47 @@ def patch_or_create_file(body: ProjectSaveFileBody):
 @router.post("/tab/list")
 def list_tab(body: ProjectTabBody):
     path = Path(body.project_dir)
-    return [
-        {
-            "name": Path(dir).name,
-            "path": dir
-        }
-        for dir in AxiumProjectManager.list_tab(path)
-    ]
+    return {
+        "project_path": path.absolute(),
+        "project_tab": [
+            {
+                "name": Path(dir).name,
+                "path": dir
+            }
+            for dir in AxiumProjectManager.list_tab(path)
+        ]
+    }
+    
 
 @router.post("/tab/open")
 def open_tab(body: ProjectTabIOBody):
-    return AxiumProjectManager.open_tab(
-        body.project_dir,
-        body.file_path
-    )
+    return {
+        "project_path": Path(body.project_dir).absolute(),
+        "project_tab": [
+            {
+                "name": Path(dir).name,
+                "path": dir
+            }
+            for dir in AxiumProjectManager.open_tab(
+                body.project_dir,
+                body.file_path
+            )
+        ]
+    }
 
 @router.post("/tab/close")
 def close_tab(body: ProjectTabIOBody):
-    return AxiumProjectManager.close_tab(
-        body.project_dir,
-        body.file_path
-    )
+    return {
+        "project_path": Path(body.project_dir).absolute(),
+        "project_tab": [
+            {
+                "name": Path(dir).name,
+                "path": dir
+            }
+            for dir in AxiumProjectManager.close_tab(
+                body.project_dir,
+                body.file_path
+            )
+        ]
+    }
     
