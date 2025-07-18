@@ -9,6 +9,8 @@ from pipelines.tabular.regression.regression_03_model_selection import Regressio
 from pipelines.tabular.regression.regression_04_model_training import RegressionModelTrainer
 from pipelines.tabular.regression.regression_05_evaluation import RegressionEvaluator
 from pipelines.tabular.regression.regression_06_deployment import RegressionModelDeployment
+from pipelines.tabular.regression.regression_07_visualization import RegressionVisualizer
+import pandas as pd
 import sys
 import os
 # sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -130,20 +132,33 @@ def demo_regression_pipeline():
 
     print(f"Evaluation results: {evaluation_results}")
 
+    # Visualization
+    print("\n" + "="*70)
+    print("GENERATING VISUALIZATIONS")
+    print("="*70)
+
+    visualizer = RegressionVisualizer(trained_model)
+
+    # Generate all visualizations
+    visualization_metrics = visualizer.plot_all_metrics(
+        X_train, y_train, X_test, y_test,
+        feature_names=list(X_train.columns),
+        save_dir='regression_visualizations',
+        show_plots=False
+    )
+
+    print(f"Visualization metrics: {visualization_metrics}")
+
     return evaluation_results
 
 
 def main():
     """Main demo function"""
 
-    # # Demo regression
-    # reg_results = demo_regression_with_kwargs()
-
-    # Demo regression pipeline
+    # Demo regression pipeline with visualization
     pipeline_results = demo_regression_pipeline()
 
     return {
-        # 'regression_results': reg_results,
         'pipeline_results': pipeline_results
     }
 

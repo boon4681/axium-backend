@@ -11,6 +11,8 @@ from pipelines.tabular.classification.classification_03_model_selection import C
 from pipelines.tabular.classification.classification_04_model_training import ClassificationModelTrainer
 from pipelines.tabular.classification.classification_05_evaluation import ClassificationEvaluator
 from pipelines.tabular.classification.classification_06_deployment import ClassificationModelDeployment
+from pipelines.tabular.classification.classification_07_visualization import ClassificationVisualizer
+import pandas as pd
 import sys
 import os
 # sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -192,21 +194,33 @@ def demo_classification_pipeline():
 
     print(f"Evaluation results: {evaluation_results}")
 
+    # Visualization
+    print("\n" + "="*70)
+    print("GENERATING VISUALIZATIONS")
+    print("="*70)
+
+    visualizer = ClassificationVisualizer(trained_model)
+
+    # Generate all visualizations
+    visualizer.plot_all_metrics(
+        X_train, y_train, X_test, y_test,
+        feature_names=list(X_train.columns),
+        class_names=['Malignant', 'Benign'],
+        save_dir='classification_visualizations',
+        show_plots=False
+    )
+
     return evaluation_results
 
 
 def main():
     """Main demo function"""
 
-    # # Demo classification
-    # clf_results = demo_classification_with_kwargs()
-
-    # Demo classification pipeline
+    # Demo classification pipeline with visualization
     clf_pipeline_results = demo_classification_pipeline()
 
     return {
-        # 'classification_results': clf_results,
-        'classification_pipeline_results': clf_pipeline_results,
+        'classification_pipeline_results': clf_pipeline_results
     }
 
 
