@@ -142,76 +142,14 @@ def demo_regression_pipeline():
     # Generate all visualizations
     visualization_metrics = visualizer.plot_all_metrics(
         X_train, y_train, X_test, y_test,
-        feature_names=list(X_train.columns)
+        feature_names=list(X_train.columns),
+        save_dir='regression_visualizations',
+        show_plots=False
     )
 
     print(f"Visualization metrics: {visualization_metrics}")
 
     return evaluation_results
-
-
-def demo_regression_visualization():
-    """Demo individual visualization capabilities for regression"""
-    print("\n" + "="*70)
-    print("REGRESSION VISUALIZATION DEMO")
-    print("="*70)
-
-    # Load and prepare data
-    loader = RegressionDataLoader()
-    X, y = loader.load_sample_dataset("california_housing")
-
-    # Preprocessing
-    preprocessor = RegressionPreprocessor()
-    processed_data = preprocessor.full_preprocessing_pipeline(
-        X, y,
-        test_size=0.3,
-        missing_value_strategy='mean',
-        scaling_method='standard',
-        remove_outliers=False,
-        select_features=False
-    )
-
-    X_train, X_test = processed_data['X_train'], processed_data['X_test']
-    y_train, y_test = processed_data['y_train'], processed_data['y_test']
-
-    # Train a Random Forest model
-    selector = RegressionModelSelector()
-    model = selector.get_model('random_forest')
-    trainer = RegressionModelTrainer(model)
-    trained_model = trainer.train_model(X_train, y_train)
-
-    # Create visualizer
-    visualizer = RegressionVisualizer(trained_model)
-
-    # Individual visualization demos
-    print("\n1. Predictions vs Actual")
-    print("-" * 40)
-    visualizer.plot_predictions_vs_actual(X_test, y_test)
-
-    print("\n2. Residual Analysis")
-    print("-" * 40)
-    visualizer.plot_residuals(X_test, y_test)
-
-    print("\n3. Learning Curve")
-    print("-" * 40)
-    X_full = pd.concat([X_train, X_test])
-    y_full = pd.concat([y_train, y_test])
-    visualizer.plot_learning_curve(X_full, y_full)
-
-    print("\n4. Feature Importance")
-    print("-" * 40)
-    visualizer.plot_feature_importance(list(X_train.columns))
-
-    print("\n5. Error Distribution")
-    print("-" * 40)
-    error_metrics = visualizer.plot_error_distribution(X_test, y_test)
-    print(f"Error metrics: {error_metrics}")
-
-    print("\n6. Prediction Intervals")
-    print("-" * 40)
-    visualizer.plot_prediction_intervals(X_test, y_test)
-
-    return trained_model
 
 
 def main():
@@ -220,15 +158,8 @@ def main():
     # Demo regression pipeline with visualization
     pipeline_results = demo_regression_pipeline()
 
-    # Demo individual visualization capabilities
-    print("\n" + "="*70)
-    print("RUNNING INDIVIDUAL VISUALIZATION DEMOS")
-    print("="*70)
-    reg_visualization_model = demo_regression_visualization()
-
     return {
-        'pipeline_results': pipeline_results,
-        'visualization_model': reg_visualization_model
+        'pipeline_results': pipeline_results
     }
 
 
