@@ -40,9 +40,9 @@ class AxiumProjectManager:
         if not project_dir.exists():
             raise FileNotFoundError("Project directory is not found")
 
-        axium_files = list(project_dir.glob("*.axium"))
+        axium_files = list(project_dir.glob("*.axm"))
         if not axium_files:
-            raise FileNotFoundError(f"No .axium file found in {project_dir}")
+            raise FileNotFoundError(f"No .axm file found in {project_dir}")
         
         with open(axium_files[0], 'r') as file:
             data = json.load(file)
@@ -71,7 +71,7 @@ class AxiumProjectManager:
     @staticmethod
     def read_recent_projects_file():
         if platform.system() == "Windows":
-            config_dir = Path(os.getenv('APPDATA', Path.home() / 'AppData' / 'Roaming')) / 'axm'
+            config_dir = Path(os.getenv('APPDATA', Path.home() / 'AppData' / 'Roaming')) / 'axium'
         else:
             config_dir = Path.home() / '.axm'
 
