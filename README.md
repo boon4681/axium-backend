@@ -10,19 +10,5 @@ uv sync
 ## Run API on development
 
 ```bash
-fastapi dev src/main.py
-```
-or
-```bash
-python -m fastapi dev src/main.py
-```
-
-## Run API on production
-
-```bash
-fastapi run src/main.py
-```
-or 
-```bash
-python -m fastapi run src/main.py
+uv run fastapi dev main.py
 ```
