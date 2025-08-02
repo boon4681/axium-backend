@@ -10,5 +10,5 @@ uv sync
 ## Run API on development
 
 ```bash
-uv run fastapi dev main.py
+uv run fastapi dev main.py --port 5113
 ```
