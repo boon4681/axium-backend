@@ -18,5 +18,10 @@ class LoadCSV(AxiumNode):
         })
     }
 
-    def run(parameters: dict, inputs: dict):
+    @classmethod
+    def validate_inputs(cls, inputs: dict):
+        return {}
+
+    @classmethod
+    def run(cls, parameters: dict, inputs: dict):
         return {}
